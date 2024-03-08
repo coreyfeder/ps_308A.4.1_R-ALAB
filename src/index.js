@@ -11,16 +11,21 @@ const progressBar = document.getElementById("progressBar");
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
-const API_KEY = "";
+const API_KEY = "live_bSaZ5P0Jc5kNjAjmInbRtPCynvXjPOsAVEJmgionxPwcJe168FKyRQpDpInaqFJG";
 
-/**
- * 1. Create an async function "initialLoad" that does the following:
- * - Retrieve a list of breeds from the cat API using fetch().
- * - Create new <options> for each of these breeds, and append them to breedSelect.
- *  - Each option should have a value attribute equal to the id of the breed.
- *  - Each option should display text equal to the name of the breed.
- * This function should execute immediately.
- */
+async function initialLoad() {
+// * - Retrieve a list of breeds from the cat API using fetch().
+    const breedList = await retrieveBreedList()
+// * - Create new <options> for each of these breeds, and append them to breedSelect.
+    updateBreedSelect(breedList)
+    //  * This function should execute immediately.
+}
+
+async function retrieveBreedList() {}
+function updateBreedSelect(breedList) {}
+    // Each option should have a value attribute equal to the id of the breed.
+    // Each option should display text equal to the name of the breed.
+
 
 /**
  * 2. Create an event handler for breedSelect that does the following:
@@ -89,7 +94,7 @@ const API_KEY = "";
  * - You can call this function by clicking on the heart at the top right of any image.
  */
 export async function favourite(imgId) {
-  // your code here
+    // your code here
 }
 
 /**
