@@ -1,5 +1,5 @@
-import * as Carousel from "./Carousel.js";
-import axios from "axios";
+// import * as Carousel from "./Carousel.js";
+// import axios from "axios";
 
 // The breed selection input element.
 const breedSelect = document.getElementById("breedSelect");
@@ -11,21 +11,88 @@ const progressBar = document.getElementById("progressBar");
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
-const API_KEY = "live_bSaZ5P0Jc5kNjAjmInbRtPCynvXjPOsAVEJmgionxPwcJe168FKyRQpDpInaqFJG";
+const catApiKey = "live_bSaZ5P0Jc5kNjAjmInbRtPCynvXjPOsAVEJmgionxPwcJe168FKyRQpDpInaqFJG";
+const catHost = "https://api.thecatapi.com/"
+const catHeaders = new Headers({
+        "Content-Type": "application/json",
+        "x-api-key": `${catApiKey}`
+    });
+const catRequestOptions = {
+        method: 'GET',
+        headers: catHeaders,
+        redirect: 'follow',
+    };
 
-async function initialLoad() {
-// * - Retrieve a list of breeds from the cat API using fetch().
-    const breedList = await retrieveBreedList()
-// * - Create new <options> for each of these breeds, and append them to breedSelect.
-    updateBreedSelect(breedList)
-    //  * This function should execute immediately.
+const catCall = (
+        catEndpoint, 
+        // size="med",
+        // page=0,
+        // limit=1,
+    ) => {
+        let response, result, error
+        fetch(
+                catHost
+                + catEndpoint
+                + "?"
+                + [
+                    // + `ssize=${size}`
+                    // + `mime_types=jpg`
+                    + `format=json`
+                    // + `has_breeds=true`
+                    // + `order=RANDOM`
+                    // + `page=${page}`
+                    // + `limit=${limit}`
+                ].join("&");
+                , catRequestOptions,
+            )
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+        return result;
+       };
+
+const catEndpoints = {
+    images: {
+        random1: 'v1/images/search',
+        randomN: 'v1/images/search?limit=',
+    },
+    breeds: {
+        list: 'v1/breeds',
+        search: 'v1/images/search?breed_ids=',
+    },
+};
+
+
+async function retrieveBreedList() {
+    // Retrieve a list of breeds from the cat API using fetch().
+    // const response = await fetch(CAT_HOST + catEndpoints.breeds.list);
+    const response = catCall(catEndpoints.breeds.list)
+    const breedList = await response.json();
+    return breedList
 }
 
-async function retrieveBreedList() {}
-function updateBreedSelect(breedList) {}
-    // Each option should have a value attribute equal to the id of the breed.
-    // Each option should display text equal to the name of the breed.
+function appendBreedOptions(breedlist) {
+    // Create new <options> for each of these breeds, and append them to breedSelect.
+    //   - Each option should have a value attribute equal to the id of the breed.
+    //   - Each option should display text equal to the name of the breed.
+    let newBreedOption;
+    for (let b of breeds) {
+        console.debug(`${b.id}: ${b.name}`);
+        let newBreedOption = document.createElement("option")
+        newBreedOption.setAttribute("value", b.id);
+        newBreedOption.textContent = b.name;
+        console.debug(newBreedOption);
+        breedSelect.appendChild(newBreedOption);
+    };
+};
 
+//  * 1. Create an async function "initialLoad" that does the following:
+async function initialLoad() {
+    const breedList = await retrieveBreedList();
+    appendBreedOptions(breedList);
+    // This function should execute immediately.
+};
+initialLoad();
 
 /**
  * 2. Create an event handler for breedSelect that does the following:
@@ -93,10 +160,11 @@ function updateBreedSelect(breedList) {}
  *   you delete that favourite using the API, giving this function "toggle" functionality.
  * - You can call this function by clicking on the heart at the top right of any image.
  */
+/* 
 export async function favourite(imgId) {
     // your code here
 }
-
+ */
 /**
  * 9. Test your favourite() function by creating a getFavourites() function.
  * - Use Axios to get all of your favourites from the cat API.
