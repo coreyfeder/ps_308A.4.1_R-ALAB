@@ -1,8 +1,30 @@
+const debugout = document.getElementById("debug");
+function hr() { return document.createElement("hr"); }
+function div() { return document.createElement("div"); }
+function debug(msg) {
+    debugout.appendChild(hr());
+    let newDiv = div();
+    debugout.appendChild(newDiv);
+    console.dir(msg);
+    newDiv.innerHTML += "raw: " + msg + "<br/>"
+    newDiv.innerHTML += `raw express: ${msg}<br/>`
+    try { newDiv.innerHTML += `typeof: ${typeof msg}<br/>` } catch(e) { newDiv.textContent += `error: ${e}` }
+    try { newDiv.innerHTML += `Array(): ${Array(msg)}<br/>` } catch(e) { newDiv.textContent += `error: ${e}` }
+    try { newDiv.innerHTML += `keys: ${Object.keys(msg)}<br/>` } catch(e) { newDiv.textContent += `error: ${e}` }
+    // try { newDiv.innerHTML += `...: ${...msg}<br/>` } catch(e) { newDiv.textContent += `error: ${e}` }
+    // try { newDiv.innerHTML += `values: ${Object.values(msg)}<br/>` } catch(e) { newDiv.textContent += `error: ${e}` }
+    // try { newDiv.innerHTML += `valueOf: ${msg.values()}<br/>` } catch(e) { newDiv.textContent += `error: ${e}` }
+        ;
+}
+function clg(...msg) { console.log(...msg); }
+function cde(...msg) { console.debug(...msg); }
+function see(thisthing) { cde(thisthing.name); cde(eval(thisthing)); }
+
 /* --------------------------------------------------------------------------
     Carousel.js 
 -------------------------------------------------------------------------- */
 
-import * as bootstrap from "bootstrap";
+// import * as bootstrap from "bootstrap";
 // import { favourite } from "./index.js";
 
 function createCarouselItem(imgSrc, imgAlt, imgId) {
@@ -80,11 +102,9 @@ function start() {
 }
 
 
-
 /* --------------------------------------------------------------------------
     index.js 
 -------------------------------------------------------------------------- */
-
 
 // import * as Carousel from "./Carousel.js";
 // import axios from "axios";
@@ -98,11 +118,6 @@ const infoDump = document.getElementById("infoDump");
 const progressBar = document.getElementById("progressBar");
 // The get favourites button element.
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
-
-let appendTest = document.createElement("option")
-appendTest.setAttribute("value", "test-value");
-appendTest.textContent = "test-text";
-breedSelect.appendChild(appendTest);
 
 
 // Step 0: Store your API key here for reference and easy access.
@@ -125,8 +140,8 @@ const catCall = (
         // page=0,
         // limit=1,
     ) => {
-        let response, result, error
-        fetch(
+        // let result, error
+        let result = fetch(
                 catHost
                 + catEndpoint
                 // + "?"
@@ -141,7 +156,8 @@ const catCall = (
                 // ].join("&")
                 , catRequestOptions,
             )
-            .then(response => response.json())
+        // debug(result)
+            .then(response => console.log(response))
             .catch(error => console.log('error', error));
         return result;
        };
@@ -161,22 +177,25 @@ const catEndpoints = {
 async function retrieveBreedList() {
     // Retrieve a list of breeds from the cat API using fetch().
     // const response = await fetch(CAT_HOST + catEndpoints.breeds.list);
-    const response = catCall(catEndpoints.breeds.list)
+    const response = catCall(catEndpoints.breeds.list);
+    console.debug(`response: ${response}`);  // Promise
     // const breedList = await response.json();
-    const breedList = await response;
+    const breedList = await response.then(resp => resp.json());
+    console.debug(`breedList: ${breedList}`);
     return breedList
 }
 
-function appendBreedOptions(breedlist) {
+function appendBreedOptions(breedList) {
     // Create new <options> for each of these breeds, and append them to breedSelect.
     //   - Each option should have a value attribute equal to the id of the breed.
     //   - Each option should display text equal to the name of the breed.
     let newBreedOption;
-    for (let b of breeds) {
-        console.debug(`${b.id}: ${b.name}`);
+    console.debug(breedList);
+    for (let breed of breedList) {
+        console.debug(`${breed.id}: ${breed.name}`);
         newBreedOption = document.createElement("option")
-        newBreedOption.setAttribute("value", b.id);
-        newBreedOption.textContent = b.name;
+        newBreedOption.setAttribute("value", breed.id);
+        newBreedOption.textContent = breed.name;
         console.debug(newBreedOption);
         breedSelect.appendChild(newBreedOption);
     };
@@ -278,8 +297,3 @@ export async function favourite(imgId) {
  * - Test other breeds as well. Not every breed has the same data available, so
  *   your code should account for this.
  */
-
-let newBreedOption = document.createElement("option")
-newBreedOption.setAttribute("value", "test-value");
-newBreedOption.textContent = "test-text";
-breedSelect.appendChild(newBreedOption);
