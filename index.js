@@ -149,9 +149,10 @@ const fetchBreeds = async() => {
         fetch(`${catHost}${catEndpoints.breeds.list}`, catRequestOptions)
         .then(response => response.json())
         .catch(error => console.error('error', error));
-    let response = {}
-    response_json.forEach((breed) => {response[breed.id] = breed.name})
-    return response
+    // let response = {}
+    // response_json.forEach((breed) => {response[breed.id] = breed.name})
+    // return response
+    return response_json
 }
 /* 
 const catCall = async (
@@ -188,7 +189,7 @@ function retrieveBreedList() {
 }
  */
 
-/* 
+
 function appendBreedOptions(breedList) {
     // Create new <options> for each of these breeds, and append them to breedSelect.
     //   - Each option should have a value attribute equal to the id of the breed.
@@ -204,12 +205,12 @@ function appendBreedOptions(breedList) {
         breedSelect.appendChild(newBreedOption);
     };
 };
- */
+
 
 //  * 1. Create an async function "initialLoad" that does the following:
 async function initialLoad() {
     const breedList = await fetchBreeds();
-    // appendBreedOptions(breedList);
+    appendBreedOptions(breedList);
     // This function should execute immediately.
 };
 initialLoad();
