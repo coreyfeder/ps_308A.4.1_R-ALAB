@@ -194,6 +194,7 @@ function appendBreedOptions(breedList) {
     // Create new <options> for each of these breeds, and append them to breedSelect.
     //   - Each option should have a value attribute equal to the id of the breed.
     //   - Each option should display text equal to the name of the breed.
+    const stagingArea = new DocumentFragment();
     let newBreedOption;
     console.debug(breedList);
     for (let breed of breedList) {
@@ -202,8 +203,9 @@ function appendBreedOptions(breedList) {
         newBreedOption.setAttribute("value", breed.id);
         newBreedOption.textContent = breed.name;
         console.debug(newBreedOption);
-        breedSelect.appendChild(newBreedOption);
+        stagingArea.append(newBreedOption);
     };
+    breedSelect.append(stagingArea);
 };
 
 
