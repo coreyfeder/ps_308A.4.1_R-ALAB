@@ -127,41 +127,6 @@ const catHeaders = new Headers({
         "Content-Type": "application/json",
         "x-api-key": `${catApiKey}`
     });
-const catRequestOptions = {
-        method: 'GET',
-        headers: catHeaders,
-        redirect: 'follow',
-        credentials: "include",
-    };
-
-const catCall = (
-        catEndpoint, 
-        // size="med",
-        // page=0,
-        // limit=1,
-    ) => {
-        // let result, error
-        let result = fetch(
-                catHost
-                + catEndpoint
-                // + "?"
-                // + [
-                    // + `ssize=${size}`,
-                    // + `mime_types=jpg`,
-                    // + `format=json`,
-                    // + `has_breeds=true`,
-                    // + `order=RANDOM`,
-                    // + `page=${page}`,
-                    // + `limit=${limit}`,
-                // ].join("&")
-                , catRequestOptions,
-            )
-        // debug(result)
-            .then(response => console.log(response))
-            .catch(error => console.log('error', error));
-        return result;
-       };
-
 const catEndpoints = {
     images: {
         random1: 'v1/images/search',
@@ -172,19 +137,58 @@ const catEndpoints = {
         search: 'v1/images/search?breed_ids=',
     },
 };
+const catRequestOptions = {
+    method: 'GET',
+    headers: catHeaders,
+    redirect: 'follow',
+};
 
 
-async function retrieveBreedList() {
+const fetchBreeds = async() => {
+    let response_json = await 
+        fetch(`${catHost}${catEndpoints.breeds.list}`, catRequestOptions)
+        .then(response => response.json())
+        .catch(error => console.error('error', error));
+    let response = {}
+    response_json.forEach((breed) => {response[breed.id] = breed.name})
+    return response
+}
+/* 
+const catCall = async (
+        catEndpoint, 
+    ) => {
+        let response = await fetch(`${catHost}${catEndpoint}`, catRequestOptions)
+        .then(response => response.json())
+        .catch(error => console.error('error', error));
+        // console.debug(`response: ${response}`)
+        // console.debug(`response[0]: ${response[0]}`)
+        // console.debug(`response[0].id: ${response[0].id}`)
+        let resp_dict = {}
+        response.forEach((breed) => {resp_dict[breed.id] = breed.name})
+        return response
+        // this is an ARRAY of DICT objects
+        // not the PROMISE of one
+        // not TEXT
+    };
+ */
+/* 
+function retrieveBreedList() {
     // Retrieve a list of breeds from the cat API using fetch().
-    // const response = await fetch(CAT_HOST + catEndpoints.breeds.list);
-    const response = catCall(catEndpoints.breeds.list);
-    console.debug(`response: ${response}`);  // Promise
-    // const breedList = await response.json();
-    const breedList = await response.then(resp => resp.json());
-    console.debug(`breedList: ${breedList}`);
+    const fullList = catCall(catEndpoints.breeds.list);
+    // returns JSON of, basically, an array of dicts
+    // but the array can't be accessed normally? or at least, has no map function?
+    // let breedList = fullList.map((breed) => [breed.id, breed.name])
+    let breedList = {}
+    for (let breed of Object.keys(fullList)) {
+        console.debug(breed)
+        console.debug(breed.id)
+    }
+    console.debug(breedList)
     return breedList
 }
+ */
 
+/* 
 function appendBreedOptions(breedList) {
     // Create new <options> for each of these breeds, and append them to breedSelect.
     //   - Each option should have a value attribute equal to the id of the breed.
@@ -200,11 +204,12 @@ function appendBreedOptions(breedList) {
         breedSelect.appendChild(newBreedOption);
     };
 };
+ */
 
 //  * 1. Create an async function "initialLoad" that does the following:
 async function initialLoad() {
-    const breedList = await retrieveBreedList();
-    appendBreedOptions(breedList);
+    const breedList = await fetchBreeds();
+    // appendBreedOptions(breedList);
     // This function should execute immediately.
 };
 initialLoad();

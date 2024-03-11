@@ -1,12 +1,12 @@
 // The breed list destinations
-const breedDiv = document.getElementById("breedDiv");
-// console.debug(`breedDiv: ${breedDiv}`);  // HTMLDivElement
-const breedText = document.getElementById("breedText");
-// console.debug(`breedText: ${breedText}`);  // HTMLTextAreaElement
-const breedList = document.getElementById("breedList");
-// console.debug(`breedList: ${breedList}`);  // HTMLUListElement
-const breedSelect = document.getElementById("breedSelect");
-// console.debug(`breedSelect: ${breedSelect}`);  // HTMLSelectElement
+const breedElDiv = document.getElementById("breedDiv");
+// console.debug(`breedElDiv: ${breedElDiv}`);  // HTMLDivElement
+const breedElText = document.getElementById("breedText");
+// console.debug(`breedElText: ${breedElText}`);  // HTMLTextAreaElement
+const breedElList = document.getElementById("breedList");
+// console.debug(`breedElList: ${breedElList}`);  // HTMLUListElement
+const breedElSelect = document.getElementById("breedSelect");
+// console.debug(`breedElSelect: ${breedElSelect}`);  // HTMLSelectElement
 
 const catApiKey =
     "live_bSaZ5P0Jc5kNjAjmInbRtPCynvXjPOsAVEJmgionxPwcJe168FKyRQpDpInaqFJG";
@@ -19,23 +19,20 @@ const catRequestOptions = {
     method: "GET",
     headers: catHeaders,
     redirect: "follow",
-    // credentials: "include",
+    // credentials: "include",  // NO!!
 };
 
-const flatCatCall = async (
+const catCall = async (
     catEndpoint,
 ) => {
-    // let result, error
-    let response = await fetch(
-        catHost + catEndpoint,
-        catRequestOptions,
-        );
-    console.debug(`flatCatCall > response: ${response}`);  // Promise
-    let result = response.json();
-    console.debug(`flatCatCall > result: ${result}`);  // Promise
-    // .catch((error) => console.log("error", error));  // for chaining
-    return result;
+    // let response = fetch("https://api.thecatapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0", catRequestOptions)
+    let response = fetch(`${catHost}${catEndpoint}`, catRequestOptions)
+    .then(response => response.json())
+    .then(result => console.debug(result))
+    .catch(error => console.error('error', error));
+    return response
 };
+
 /* 
 const catCall = (
     catEndpoint,
@@ -76,6 +73,6 @@ const catEndpoints = {
     },
 };
 
-let breeds = flatCatCall(catEndpoints.breeds.list).then((resp) => console.log(resp));
+let breeds = catCall(catEndpoints.breeds.list).then();
 console.debug(`breeds: ${breeds}`);
 console.debug(breeds);
